@@ -46,9 +46,15 @@ function framePath(i) {
 }
 
 /* ── Preload frames ─────────────────────── */
+let failCount = 0;
 function preloadFrames() {
   let idx = 0;
   let active = 0;
+
+  /* Fallback: if no frames exist, show site after 3s */
+  const fallbackTimer = setTimeout(() => {
+    if (loadedCount === 0 || failCount >= CONCURRENCY) finishLoading();
+  }, 3000);
 
   function next() {
     while (active < CONCURRENCY && idx < TOTAL_FRAMES) {
@@ -56,7 +62,7 @@ function preloadFrames() {
       active++;
       const img = new Image();
       img.onload = () => { images[i] = img; active--; loadedCount++; progress(); next(); };
-      img.onerror = () => { active--; loadedCount++; progress(); next(); };
+      img.onerror = () => { active--; failCount++; loadedCount++; progress(); next(); };
       img.src = framePath(i + 1);
     }
   }
@@ -65,7 +71,7 @@ function preloadFrames() {
     const pct = Math.round((loadedCount / TOTAL_FRAMES) * 100);
     loaderFill.style.width = pct + '%';
     loaderPct.textContent = pct + '%';
-    if (loadedCount >= TOTAL_FRAMES) finishLoading();
+    if (loadedCount >= TOTAL_FRAMES) { clearTimeout(fallbackTimer); finishLoading(); }
   }
 
   next();
