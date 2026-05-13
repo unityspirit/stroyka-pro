@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>СтройПро — Строительство домов и реставрация зданий | Россия и за рубежом</title>
+  <meta name="description" content="СтройПро — строительство частных жилых домов и реставрация зданий в России и за рубежом. 18 лет опыта, 500+ проектов, гарантия качества.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- ═══ LOADER ═══ -->
+  <div id="loader">
+    <div class="loader-content">
+      <div class="loader-logo">⬡ СТРОЙПРО</div>
+      <div class="loader-bar"><div class="loader-fill" id="loaderFill"></div></div>
+      <div class="loader-pct" id="loaderPct">0%</div>
+    </div>
+  </div>
+
+  <!-- ═══ SCROLL CANVAS ═══ -->
+  <canvas id="scrollCanvas"></canvas>
+
+  <!-- ═══ HEADER ═══ -->
+  <header class="site-header" id="siteHeader">
+    <div class="header-inner">
+      <a href="#" class="logo">⬡ <span class="gradient-text">СТРОЙПРО</span></a>
+      <nav class="desktop-nav" id="desktopNav">
+        <a href="#" class="nav-link active" data-section="0">Главная</a>
+        <a href="#" class="nav-link" data-section="1">Услуги</a>
+        <a href="#" class="nav-link" data-section="2">Проекты</a>
+        <a href="#" class="nav-link" data-section="3">География</a>
+        <a href="#" class="nav-link" data-section="4">О нас</a>
+        <a href="#" class="nav-link" data-section="5">Контакты</a>
+      </nav>
+      <a href="tel:+79001234567" class="header-cta">+7 (900) 123-45-67</a>
+      <button class="burger" id="burger" aria-label="Меню">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <!-- Mobile menu -->
+    <nav class="mobile-nav" id="mobileNav">
+      <a href="#" class="nav-link" data-section="0">Главная</a>
+      <a href="#" class="nav-link" data-section="1">Услуги</a>
+      <a href="#" class="nav-link" data-section="2">Проекты</a>
+      <a href="#" class="nav-link" data-section="3">География</a>
+      <a href="#" class="nav-link" data-section="4">О нас</a>
+      <a href="#" class="nav-link" data-section="5">Контакты</a>
+    </nav>
+  </header>
+
+  <!-- ═══ PAGE CONTAINER ═══ -->
+  <div class="scroll-container" id="scrollContainer">
+
+    <!-- ── SECTION 0: HERO ── -->
+    <section class="page" id="page-0">
+      <div class="page-inner hero-content">
+        <div class="hero-badge">СТРОИТЕЛЬСТВО И РЕСТАВРАЦИЯ • С 2008 ГОДА</div>
+        <h1 class="hero-title">
+          СТРОИМ<br>
+          <span class="gradient-text">БУДУЩЕЕ</span>
+        </h1>
+        <p class="hero-sub">Строительство частных жилых домов и реставрация зданий в России и за рубежом. Полный цикл — от проекта до ключей.</p>
+        <div class="hero-buttons">
+          <a href="#" class="btn btn-primary" data-section="5">Обсудить проект</a>
+          <a href="#" class="btn btn-outline" data-section="1">Наши услуги</a>
+        </div>
+        <div class="hero-stats">
+          <div class="stat">
+            <span class="stat-num gradient-text">18+</span>
+            <span class="stat-label">Лет опыта</span>
+          </div>
+          <div class="stat">
+            <span class="stat-num gradient-text">500+</span>
+            <span class="stat-label">Объектов</span>
+          </div>
+          <div class="stat">
+            <span class="stat-num gradient-text">12</span>
+            <span class="stat-label">Стран</span>
+          </div>
+          <div class="stat">
+            <span class="stat-num gradient-text">100%</span>
+            <span class="stat-label">Гарантия</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── SECTION 1: SERVICES ── -->
+    <section class="page" id="page-1">
+      <div class="page-inner">
+        <h2 class="section-title">Наши <span class="gradient-text">услуги</span></h2>
+        <p class="section-sub">Полный спектр строительных и реставрационных работ под ключ</p>
+        <div class="cards-grid services-grid">
+          <div class="card reveal">
+            <div class="card-icon">🏠</div>
+            <h3>Строительство домов</h3>
+            <p>Проектирование и строительство частных жилых домов любой сложности — от компактных коттеджей до элитных резиденций.</p>
+          </div>
+          <div class="card reveal">
+            <div class="card-icon">🏛️</div>
+            <h3>Реставрация зданий</h3>
+            <p>Профессиональная реставрация исторических зданий и памятников архитектуры с сохранением оригинального облика.</p>
+          </div>
+          <div class="card reveal">
+            <div class="card-icon">📐</div>
+            <h3>Проектирование</h3>
+            <p>Архитектурное проектирование, 3D-визуализация, разработка рабочей документации и авторский надзор.</p>
+          </div>
+          <div class="card reveal">
+            <div class="card-icon">🔧</div>
+            <h3>Реконструкция</h3>
+            <p>Капитальная реконструкция с перепланировкой, усилением конструкций и модернизацией инженерных систем.</p>
+          </div>
+          <div class="card reveal">
+            <div class="card-icon">🌍</div>
+            <h3>Зарубежные проекты</h3>
+            <p>Строительство и реставрация за рубежом — Европа, Ближний Восток, СНГ. Знание международных стандартов.</p>
+          </div>
+          <div class="card reveal">
+            <div class="card-icon">🛡️</div>
+            <h3>Управление проектами</h3>
+            <p>Полный цикл управления: бюджет, сроки, качество, приёмка. Единый ответственный менеджер на весь проект.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── SECTION 2: PROJECTS ── -->
+    <section class="page" id="page-2">
+      <div class="page-inner">
+        <h2 class="section-title">Наши <span class="gradient-text">проекты</span></h2>
+        <p class="section-sub">Примеры реализованных объектов в России и за рубежом</p>
+        <div class="cards-grid projects-grid">
+          <div class="card project-card reveal">
+            <div class="project-tag">Строительство</div>
+            <h3>Резиденция «Горки-10»</h3>
+            <p class="project-meta">📍 Московская область • 450 м²</p>
+            <p>Современный загородный дом с панорамным остеклением. Каркасно-монолитная технология, энергоэффективность класса А+.</p>
+            <div class="project-stats">
+              <span>⏱ 14 мес.</span>
+              <span>💰 от 85 000 ₽/м²</span>
+            </div>
+          </div>
+          <div class="card project-card reveal">
+            <div class="project-tag tag-restore">Реставрация</div>
+            <h3>Особняк XIX века</h3>
+            <p class="project-meta">📍 Санкт-Петербург • 1 200 м²</p>
+            <p>Полная реставрация фасадов, лепнины и интерьеров с применением оригинальных технологий. Объект культурного наследия.</p>
+            <div class="project-stats">
+              <span>⏱ 24 мес.</span>
+              <span>🏅 Категория: ОКН</span>
+            </div>
+          </div>
+          <div class="card project-card reveal">
+            <div class="project-tag tag-abroad">Зарубежный</div>
+            <h3>Вилла на побережье</h3>
+            <p class="project-meta">📍 Черногория, Тиват • 320 м²</p>
+            <p>Средиземноморский стиль с инфинити-бассейном. Полный цикл — от земли до ключей, включая согласования.</p>
+            <div class="project-stats">
+              <span>⏱ 18 мес.</span>
+              <span>🌊 Вид на море</span>
+            </div>
+          </div>
+          <div class="card project-card reveal">
+            <div class="project-tag">Строительство</div>
+            <h3>Шале «Архыз»</h3>
+            <p class="project-meta">📍 КЧР, Архыз • 280 м²</p>
+            <p>Горное шале из клеёного бруса и камня. Кровля из натурального сланца, панорамные окна на Кавказский хребет.</p>
+            <div class="project-stats">
+              <span>⏱ 12 мес.</span>
+              <span>🏔️ 1 800 м н.у.м.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── SECTION 3: GEOGRAPHY ── -->
+    <section class="page" id="page-3">
+      <div class="page-inner">
+        <h2 class="section-title">Наша <span class="gradient-text">география</span></h2>
+        <p class="section-sub">Работаем по всей России и за рубежом</p>
+        <div class="geo-layout">
+          <div class="card geo-card reveal">
+            <h3 class="gradient-text">🇷🇺 Россия</h3>
+            <ul class="geo-list">
+              <li>Москва и Подмосковье</li>
+              <li>Санкт-Петербург и Ленобласть</li>
+              <li>Краснодарский край</li>
+              <li>Кавказские Минеральные Воды</li>
+              <li>Крым и Сочи</li>
+              <li>Казань, Екатеринбург, Новосибирск</li>
+            </ul>
+          </div>
+          <div class="card geo-card reveal">
+            <h3 class="gradient-text">🌍 За рубежом</h3>
+            <ul class="geo-list">
+              <li>Черногория, Тиват</li>
+              <li>Турция, Анталья и Бодрум</li>
+              <li>ОАЭ, Дубай</li>
+              <li>Кипр, Лимассол</li>
+              <li>Грузия, Тбилиси и Батуми</li>
+              <li>Сербия, Белград</li>
+            </ul>
+          </div>
+          <div class="card geo-card process-card reveal">
+            <h3 class="gradient-text">📋 Как мы работаем за рубежом</h3>
+            <div class="process-steps">
+              <div class="step"><span class="step-num">01</span><span>Консультация и анализ локального рынка</span></div>
+              <div class="step"><span class="step-num">02</span><span>Подбор участка и юридическое сопровождение</span></div>
+              <div class="step"><span class="step-num">03</span><span>Проектирование по местным стандартам</span></div>
+              <div class="step"><span class="step-num">04</span><span>Строительство с нашей бригадой + местные подрядчики</span></div>
+              <div class="step"><span class="step-num">05</span><span>Сдача объекта и гарантийное обслуживание</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── SECTION 4: ABOUT ── -->
+    <section class="page" id="page-4">
+      <div class="page-inner">
+        <h2 class="section-title">Почему <span class="gradient-text">мы</span></h2>
+        <p class="section-sub">18 лет безупречной репутации в строительстве</p>
+        <div class="cards-grid about-grid">
+          <div class="card reveal">
+            <div class="card-icon">✅</div>
+            <h3>Полный цикл</h3>
+            <p>От идеи до ключей — проектирование, согласования, строительство, отделка и ландшафт. Всё в одних руках.</p>
+          </div>
+          <div class="card reveal">
+            <div class="card-icon">📊</div>
+            <h3>Фиксированная смета</h3>
+            <p>Прозрачное ценообразование. Фиксируем стоимость в договоре. Никаких скрытых доплат и «сюрпризов».</p>
+          </div>
+          <div class="card reveal">
+            <div class="card-icon">🏆</div>
+            <h3>Опыт реставрации</h3>
+            <p>Работаем с объектами культурного наследия. Лицензия Минкультуры, аттестованные реставраторы.</p>
+          </div>
+          <div class="card reveal">
+            <div class="card-icon">🌐</div>
+            <h3>Международный опыт</h3>
+            <p>Реализовали проекты в 12 странах. Знаем местные стандарты, нормы и особенности согласований.</p>
+          </div>
+        </div>
+        <div class="testimonial card reveal">
+          <blockquote>
+            «СтройПро построили нам дом в Черногории — от покупки участка до меблировки. Всё чётко, в срок и по смете. Теперь строим второй дом в Подмосковье с ними же.»
+          </blockquote>
+          <cite>— Алексей К., Москва / Тиват</cite>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── SECTION 5: CONTACTS ── -->
+    <section class="page" id="page-5">
+      <div class="page-inner">
+        <h2 class="section-title">Обсудить <span class="gradient-text">проект</span></h2>
+        <p class="section-sub">Оставьте заявку — и мы свяжемся в течение 2 часов</p>
+        <div class="contact-layout">
+          <form class="contact-form card reveal" id="contactForm">
+            <input type="text" placeholder="Ваше имя" required id="inputName">
+            <input type="tel" placeholder="+7 (___) ___-__-__" required id="inputPhone">
+            <select id="inputService">
+              <option value="">Выберите услугу</option>
+              <option>Строительство дома</option>
+              <option>Реставрация здания</option>
+              <option>Реконструкция</option>
+              <option>Зарубежный проект</option>
+              <option>Проектирование</option>
+              <option>Другое</option>
+            </select>
+            <textarea placeholder="Расскажите о вашем проекте" rows="3" id="inputMessage"></textarea>
+            <button type="submit" class="btn btn-primary btn-full" id="submitBtn">Отправить заявку</button>
+          </form>
+          <div class="contact-info card reveal">
+            <div class="contact-row">
+              <span class="contact-icon">📞</span>
+              <div>
+                <strong>Телефон</strong>
+                <a href="tel:+79001234567">+7 (900) 123-45-67</a>
+              </div>
+            </div>
+            <div class="contact-row">
+              <span class="contact-icon">📧</span>
+              <div>
+                <strong>Email</strong>
+                <a href="mailto:info@stroypro.ru">info@stroypro.ru</a>
+              </div>
+            </div>
+            <div class="contact-row">
+              <span class="contact-icon">📍</span>
+              <div>
+                <strong>Офис</strong>
+                <span>Москва, ул. Строителей, д. 12, оф. 301</span>
+              </div>
+            </div>
+            <div class="contact-row">
+              <span class="contact-icon">🕐</span>
+              <div>
+                <strong>Режим работы</strong>
+                <span>Пн–Пт: 09:00 – 19:00</span>
+              </div>
+            </div>
+            <div class="contact-row">
+              <span class="contact-icon">💬</span>
+              <div>
+                <strong>Мессенджеры</strong>
+                <span>WhatsApp • Telegram</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div><!-- /scroll-container -->
+
+  <script src="app.js"></script>
+</body>
+</html>

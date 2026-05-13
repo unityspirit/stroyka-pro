@@ -1,0 +1,8 @@
+veo_clips/
+*.mp4
+*.png
+frames-raw/
+!frames-webp/
+!frames-mobile/
+!assets/
+node_modules/
