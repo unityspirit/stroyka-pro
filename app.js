@@ -1,209 +1,120 @@
 /* ═══════════════════════════════════════
-   СТРОЙПРО — ScrollCanvas Engine
+   СТРОЙПРО — ScrollCanvas Engine (Native Scroll-Snap)
    ═══════════════════════════════════════ */
 'use strict';
 
-/* ── Constants ──────────────────────────── */
-const TOTAL_FRAMES = 576;
-const PAGE_COUNT = 6;
+const TOTAL_FRAMES = 672;
 const LERP = 0.08;
 const CONCURRENCY = 48;
+const isMobile = /Mobi|Android|iPhone/i.test(navigator.userAgent) || innerWidth < 768;
+const FRAME_DIR = isMobile ? 'frames-mobile' : 'frames-webp';
 
-/* ── State ──────────────────────────────── */
-let scrollPos = 0;
-let targetScroll = 0;
-let currentFrame = 0;
-let images = new Array(TOTAL_FRAMES);
-let loadedCount = 0;
-let isLoading = true;
-const isMobile = /Mobi|Android|iPhone/i.test(navigator.userAgent) || window.innerWidth < 768;
-
-/* ── DOM refs ───────────────────────────── */
-const canvas = document.getElementById('scrollCanvas');
-const ctx = canvas.getContext('2d');
 const loader = document.getElementById('loader');
 const loaderFill = document.getElementById('loaderFill');
 const loaderPct = document.getElementById('loaderPct');
-const pages = document.querySelectorAll('.page');
-const navLinks = document.querySelectorAll('.nav-link');
+const pages = Array.from(document.querySelectorAll('.page'));
+const navLinks = Array.from(document.querySelectorAll('.nav-link'));
 const burger = document.getElementById('burger');
 const mobileNav = document.getElementById('mobileNav');
+const canvas = document.getElementById('scrollCanvas');
+const ctx = canvas.getContext('2d');
 
-/* ── Canvas sizing ──────────────────────── */
-function resizeCanvas() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-  drawFrame();
+let targetFrame = 0, currentFrame = 0, isReady = false;
+const frames = new Array(TOTAL_FRAMES);
+
+function resize(){
+  const dpr = Math.min(devicePixelRatio||1, isMobile?1.5:2);
+  canvas.width = innerWidth*dpr; canvas.height = innerHeight*dpr;
+  canvas.style.width = innerWidth+'px'; canvas.style.height = innerHeight+'px';
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  drawFrame(Math.round(currentFrame));
 }
-window.addEventListener('resize', resizeCanvas);
-resizeCanvas();
+addEventListener('resize', resize);
 
-/* ── Frame path ─────────────────────────── */
-function framePath(i) {
-  const dir = isMobile ? 'frames-mobile' : 'frames-webp';
-  const num = String(i).padStart(6, '0');
-  return `${dir}/frame_${num}.webp`;
-}
-
-/* ── Preload frames ─────────────────────── */
-let failCount = 0;
-function preloadFrames() {
-  let idx = 0;
-  let active = 0;
-
-  /* Fallback: if no frames exist, show site after 3s */
-  const fallbackTimer = setTimeout(() => {
-    if (loadedCount === 0 || failCount >= CONCURRENCY) finishLoading();
-  }, 3000);
-
-  function next() {
-    while (active < CONCURRENCY && idx < TOTAL_FRAMES) {
-      const i = idx++;
-      active++;
-      const img = new Image();
-      img.onload = () => { images[i] = img; active--; loadedCount++; progress(); next(); };
-      img.onerror = () => { active--; failCount++; loadedCount++; progress(); next(); };
-      img.src = framePath(i + 1);
-    }
-  }
-
-  function progress() {
-    const pct = Math.round((loadedCount / TOTAL_FRAMES) * 100);
-    loaderFill.style.width = pct + '%';
-    loaderPct.textContent = pct + '%';
-    if (loadedCount >= TOTAL_FRAMES) { clearTimeout(fallbackTimer); finishLoading(); }
-  }
-
-  next();
+function padNum(n){return String(n).padStart(6,'0')}
+function loadFrame(i){
+  return new Promise(r=>{
+    const img=new Image();
+    img.onload=()=>{if(img.decode)img.decode().then(()=>{frames[i]=img;r()}).catch(()=>{frames[i]=img;r()});else{frames[i]=img;r()}};
+    img.onerror=()=>r();
+    img.src=`${FRAME_DIR}/frame_${padNum(i+1)}.webp`;
+  });
 }
 
-function finishLoading() {
-  isLoading = false;
-  loader.classList.add('hidden');
-  pages[0].classList.add('active');
-  revealElements(0);
-  drawFrame();
+async function loadAllFrames(){
+  let loaded=0;
+  const queue=Array.from({length:TOTAL_FRAMES},(_,i)=>i);
+  async function worker(){while(queue.length>0){const idx=queue.shift();if(idx===undefined)return;await loadFrame(idx);loaded++;const pct=Math.floor((loaded/TOTAL_FRAMES)*100);loaderFill.style.width=pct+'%';loaderPct.textContent=pct+'%';}}
+  await Promise.all(Array.from({length:CONCURRENCY},()=>worker()));
 }
 
-/* ── Draw frame ─────────────────────────── */
-function drawFrame() {
-  const idx = Math.min(Math.max(Math.round(currentFrame), 0), TOTAL_FRAMES - 1);
-  const img = images[idx];
-  if (!img) return;
-
-  const cw = canvas.width, ch = canvas.height;
-  const iw = img.naturalWidth, ih = img.naturalHeight;
-  const scale = Math.max(cw / iw, ch / ih);
-  const dw = iw * scale, dh = ih * scale;
-  const dx = (cw - dw) / 2, dy = (ch - dh) / 2;
-
-  ctx.clearRect(0, 0, cw, ch);
-  ctx.drawImage(img, dx, dy, dw, dh);
+function drawFrame(idx){
+  idx=Math.max(0,Math.min(TOTAL_FRAMES-1,idx));
+  const img=frames[idx];if(!img)return;
+  const cw=innerWidth,ch=innerHeight,iw=img.naturalWidth||img.width,ih=img.naturalHeight||img.height;
+  const scale=Math.max(cw/iw,ch/ih),sw=iw*scale,sh=ih*scale;
+  ctx.clearRect(0,0,cw,ch);ctx.drawImage(img,(cw-sw)/2,(ch-sh)/2,sw,sh);
 }
 
-/* ── Scroll handling ────────────────────── */
-const MAX_SCROLL = (PAGE_COUNT - 1) * 1000;
+addEventListener('scroll',()=>{
+  if(!isReady)return;
+  const maxScroll=document.documentElement.scrollHeight-innerHeight;
+  const progress=maxScroll>0?scrollY/maxScroll:0;
+  targetFrame=progress*(TOTAL_FRAMES-1);
+},{passive:true});
 
-function onWheel(e) {
-  e.preventDefault();
-  targetScroll = Math.max(0, Math.min(targetScroll + e.deltaY * 1.2, MAX_SCROLL));
-}
-window.addEventListener('wheel', onWheel, { passive: false });
+function scrollToPage(i){const p=pages[i];if(p)scrollTo({top:p.offsetTop,behavior:'smooth'})}
 
-/* Touch */
-let touchY = 0;
-window.addEventListener('touchstart', e => { touchY = e.touches[0].clientY; }, { passive: true });
-window.addEventListener('touchmove', e => {
-  const dy = touchY - e.touches[0].clientY;
-  touchY = e.touches[0].clientY;
-  targetScroll = Math.max(0, Math.min(targetScroll + dy * 3, MAX_SCROLL));
-}, { passive: true });
+navLinks.forEach(l=>l.addEventListener('click',e=>{
+  e.preventDefault();scrollToPage(parseInt(l.dataset.section));
+  if(mobileNav)mobileNav.classList.remove('open');
+  if(burger)burger.classList.remove('open');
+}));
+document.querySelectorAll('[data-section]').forEach(el=>{
+  if(el.classList.contains('nav-link'))return;
+  el.addEventListener('click',e=>{e.preventDefault();scrollToPage(parseInt(el.dataset.section))});
+});
+if(burger)burger.addEventListener('click',()=>{burger.classList.toggle('open');mobileNav.classList.toggle('open')});
 
-/* ── Animation loop ─────────────────────── */
-function animate() {
-  scrollPos += (targetScroll - scrollPos) * LERP;
-  const normScroll = scrollPos / MAX_SCROLL;
-  currentFrame = normScroll * (TOTAL_FRAMES - 1);
-  drawFrame();
+addEventListener('keydown',e=>{
+  const cur=pages.findIndex(p=>p.classList.contains('is-active'));
+  if(e.key==='ArrowDown'||e.key===' '){e.preventDefault();if(cur<pages.length-1)scrollToPage(cur+1)}
+  if(e.key==='ArrowUp'){e.preventDefault();if(cur>0)scrollToPage(cur-1)}
+});
 
-  /* Active page */
-  const rawPage = (scrollPos / 1000);
-  const pageIdx = Math.round(rawPage);
-
-  pages.forEach((p, i) => {
-    if (i === pageIdx) {
-      p.classList.add('active');
-      revealElements(i);
-    } else {
-      p.classList.remove('active');
+let lastIdx=-1;
+const observer=new IntersectionObserver(entries=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){
+      const idx=pages.indexOf(entry.target);
+      if(idx!==-1&&idx!==lastIdx){
+        lastIdx=idx;
+        pages.forEach((p,i)=>p.classList.toggle('is-active',i===idx));
+        navLinks.forEach(l=>l.classList.toggle('active',parseInt(l.dataset.section)===idx));
+      }
     }
   });
+},{root:null,rootMargin:'-40% 0px -40% 0px'});
+pages.forEach(p=>observer.observe(p));
 
-  /* Nav highlight */
-  navLinks.forEach(l => {
-    const s = parseInt(l.dataset.section);
-    l.classList.toggle('active', s === pageIdx);
-  });
-
+function animate(){
   requestAnimationFrame(animate);
+  currentFrame+=(targetFrame-currentFrame)*LERP;
+  if(isReady)drawFrame(Math.round(currentFrame));
 }
+animate();
 
-/* ── Reveal ──────────────────────────────── */
-const revealed = new Set();
-function revealElements(idx) {
-  if (revealed.has(idx)) return;
-  revealed.add(idx);
-  const els = pages[idx].querySelectorAll('.reveal');
-  els.forEach((el, i) => {
-    setTimeout(() => el.classList.add('visible'), i * 120);
-  });
-}
+(async function init(){
+  resize();
+  await loadAllFrames();
+  isReady=true;drawFrame(0);
+  setTimeout(()=>{loader.classList.add('hidden');pages[0].classList.add('is-active')},400);
+})();
 
-/* ── Nav clicks ─────────────────────────── */
-navLinks.forEach(link => {
-  link.addEventListener('click', e => {
-    e.preventDefault();
-    const s = parseInt(link.dataset.section);
-    targetScroll = s * 1000;
-    /* Close mobile */
-    mobileNav.classList.remove('open');
-    burger.classList.remove('open');
-  });
-});
-
-/* Buttons with data-section */
-document.querySelectorAll('[data-section]').forEach(el => {
-  if (el.classList.contains('nav-link')) return;
-  el.addEventListener('click', e => {
-    e.preventDefault();
-    targetScroll = parseInt(el.dataset.section) * 1000;
-  });
-});
-
-/* ── Burger ──────────────────────────────── */
-burger.addEventListener('click', () => {
-  burger.classList.toggle('open');
-  mobileNav.classList.toggle('open');
-});
-
-/* ── Keyboard ───────────────────────────── */
-window.addEventListener('keydown', e => {
-  if (e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); targetScroll = Math.min(targetScroll + 1000, MAX_SCROLL); }
-  if (e.key === 'ArrowUp') { e.preventDefault(); targetScroll = Math.max(targetScroll - 1000, 0); }
-});
-
-/* ── Init ────────────────────────────────── */
-preloadFrames();
-requestAnimationFrame(animate);
-
-/* ── Form submit ─────────────────────────── */
-const form = document.getElementById('contactForm');
-if (form) {
-  form.addEventListener('submit', e => {
-    e.preventDefault();
-    const btn = document.getElementById('submitBtn');
-    btn.textContent = '✓ Заявка отправлена!';
-    btn.style.background = '#4ECDC4';
-    setTimeout(() => { btn.textContent = 'Отправить заявку'; btn.style.background = ''; }, 3000);
-  });
-}
+const form=document.getElementById('contactForm');
+if(form){form.addEventListener('submit',e=>{
+  e.preventDefault();
+  const btn=document.getElementById('submitBtn');
+  btn.textContent='✓ Заявка отправлена!';btn.style.background='#4ECDC4';
+  setTimeout(()=>{btn.textContent='Отправить заявку';btn.style.background=''},3000);
+})}
