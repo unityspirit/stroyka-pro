@@ -5,4 +5,5 @@ frames-raw/
 !frames-webp/
 !frames-mobile/
 !assets/
+!assets/*.png
 node_modules/
